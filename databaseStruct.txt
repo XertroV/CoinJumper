@@ -1,42 +1,61 @@
-# coinjumper db structure
+coinjumper db structure
+=======================
 
+each key prefix used for subgroups should have an [attribs] list which includes all (or most) subkeys.
+The existance of %s:attribs will be tested for to see if %s is the last subkey (ie carries a value) 
+
+subkeys forming a <subkeyDescription> or the like have an associated indexSubkeyDescription key (eg <name> and indexName or <id> and indexId)
+They should not have plurals
+for any <somethingHere> there should be an associated indexSomethingHere - capitalisation matters
+
+<class> is arbitrary and used for categorization
+<group> is the 'presets' one has for item customization for *one type of item only* (like sandwich, coffee, burger, etc)
+
+
+
+DATABASE
+========
+#DBSTART
 cj
+-attribs  				(list)		[groups, items]
 -groups
-|-attribs (list) 	[<name>]
-|-indexName (list)
-|-<name>
-||-attribs		[options]
+|-attribs 				(list) 		[<name>]
+|-indexName 			(list)		[name1, name2, ...]
+|-<name>							eg: coffee, iced coffee, tea, pasta, burrito, etc - food/drink 'species' where they all have the same options
+||-attribs				(list)		[options,class]
+||-class				(string)	corresponds to a <class> below
 ||-options
-|||- attribs		[optionName]
-|||-indexOptionName (list)
-|||-<optionName>
-||||-attribs [type, listOfOptions]
-||||-type (string) [eg:selectOne,selectMany,inputNumber,inputAscii,trueFalse]
-||||-listOfOptions (list) [eg:vanilla,caramel,hazelnut]
+|||- attribs			(list)		[<optionName>,]
+|||-indexOptionName 	(list)		[optionName1, optionName2, ...]
+|||-<optionName>					eg: falvouring, typeOfMilk, etc
+||||-attribs 			(list)		[type, listOfOptions, default]
+||||-type 				(string)	one of:selectOne,selectMany,inputNumber,inputAscii,trueFalse
+||||-listOfOptions 		(list)		[eg:none,vanilla,caramel,hazelnut or skim,lite,full cream]
+||||-default			(string)	[eg:none, or full cream]
 -items
-|-attribs (list) 	[class]
-|-indexClass
-|-<class>
-||-attribs [<name>]
-||-indexName (list)
+|-attribs				(list)		[<class>,]
+|-indexClass			(list)		[class1, class2, ...]
+|-<class>							eg: Beverage, Food, etc. Arbitrary and used for grouping and categorization
+||-attribs 				(list)		[<name>,]
+||-indexName 			(list)		[name1, name2, ...]
 ||-<name>
-|||-attribs 	[description, group, price]
-|||-description (string)
-|||-group (string)
-|||-price (num as string, in AUD)
+|||-attribs 			(list)		[description, group, price]
+|||-description 		(string)
+|||-group 				(string)
+|||-price 				(num as string, in AUD)
 -invoices
-|-indexIDs
+|-indexId
 |-<id>
-||-network (string, btc, ltc, etc)
-||-amount (num as string)
-||-confirmed (bool)
-||-orderDetails (string of json formatted order)
+||-network 				(string)	eg: btc, ltc, aud, etc - must correspond to a <network> below
+||-amount 				(num as string, 8dps)
+||-confirmed 			(bool)		true/false
+||-orderDetails 		(string of json formatted order)
 -meta
-|-version (0.1 or w/e)
+|-version 				(0.1 or w/e)
 -config
-|-indexNetworks (list)
+|-indexNetwork			(list)
 |-<network>
 ||-hostport (string)    }
-||-username             } - connecting to Bitcoind with watch-onlies from xpub
+||-username             } - connecting to Bitcoind with watch-onlys from xpub
 ||-password             }
 ||-xpub
