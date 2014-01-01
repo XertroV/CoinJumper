@@ -1,0 +1,42 @@
+# coinjumper db structure
+
+cj
+-groups
+|-attribs (list) 	[<name>]
+|-indexName (list)
+|-<name>
+||-attribs		[options]
+||-options
+|||- attribs		[optionName]
+|||-indexOptionName (list)
+|||-<optionName>
+||||-attribs [type, listOfOptions]
+||||-type (string) [eg:selectOne,selectMany,inputNumber,inputAscii,trueFalse]
+||||-listOfOptions (list) [eg:vanilla,caramel,hazelnut]
+-items
+|-attribs (list) 	[class]
+|-indexClass
+|-<class>
+||-attribs [<name>]
+||-indexName (list)
+||-<name>
+|||-attribs 	[description, group, price]
+|||-description (string)
+|||-group (string)
+|||-price (num as string, in AUD)
+-invoices
+|-indexIDs
+|-<id>
+||-network (string, btc, ltc, etc)
+||-amount (num as string)
+||-confirmed (bool)
+||-orderDetails (string of json formatted order)
+-meta
+|-version (0.1 or w/e)
+-config
+|-indexNetworks (list)
+|-<network>
+||-hostport (string)    }
+||-username             } - connecting to Bitcoind with watch-onlies from xpub
+||-password             }
+||-xpub
