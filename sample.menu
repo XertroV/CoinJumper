@@ -1,0 +1,60 @@
+{
+	"items":{
+		"Drinks":{
+			"Coffee":{
+				"description":"Delicious espresso coffee.",
+				"group":"coffee",
+				"basePrice":"3.00"
+			},
+			"Tea":{
+				"description":"Nice cuppa tea.",
+				"group":"tea",
+				"basePrice":"2.50"
+			}
+		},
+		"Food":{
+			"Burrito":{
+				"description":"Just scrumptious.",
+				"group":"burrito",
+				"basePrice":"7.50"
+			}
+		}
+	},
+	"groups":{
+		"coffee":{
+			"class":"Drinks",
+			"options":{
+				"Temperature":{
+					"default":"hot",
+					"listOfOptions":["hot","med","warm"],
+					"optionType":"selectOne"
+				},
+				"Type":{
+					"default":"",
+					"listOfOptions":["latte","mocha"],
+					"optionType":"selectOne"
+				}
+			}
+		},
+		"burrito":{
+			"class":"Food",
+			"options":{
+				"Filling":{
+					"default":"",
+					"listOfOptions":["chicken","beef","beans"],
+					"optionType":"selectOne"
+				}
+			}
+		},
+		"tea":{
+			"class":"Drinks",
+			"options":{
+				"Type":{
+					"default":"Earl Grey",
+					"listOfOptions":["Earl Grey","English Breakfast"],
+					"optionType":"selectOne"
+				}
+			}
+		}
+	}
+}
