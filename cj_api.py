@@ -22,7 +22,7 @@ log_handler.setLevel(logging.WARNING)
 app.logger.addHandler(log_handler)
 
 from Crypto.Hash import SHA256
-import json, copy
+import json, copy, time
 
 ### LOAD CONFIG
 
@@ -72,12 +72,13 @@ class Database:
 	def delete(self,loc):
 		return self.r.delete(loc)
 	# Complex Operations
-	def dump(self, pathToDump): # THIS IS UNTESTED - TEST!!!!
+	def dump(self, pathToDump):
 		ans = {}
 		attribPath = '%s:attribs' % pathToDump
 		if self.exists(attribPath):
 			setOfAttribs = self.smembers(attribPath)
 			for attrib in setOfAttribs:
+				print attrib
 				if attrib[0] == '{' and attrib[-1] == '}':
 					attribName = attrib[1:-1]
 					iName = attribNameToIndex(attribName)
@@ -89,7 +90,17 @@ class Database:
 					ans[attrib] = self.dump('%s:%s' % (pathToDump,attrib))
 			return ans
 		else:
-			return self.get(pathToDump)
+			try:
+				return self.get(pathToDump)
+			except:
+				try:
+					return self.smembers(pathToDump)
+				except:
+					try:
+						return self.lget(pathToDump)
+					except:
+						print "OH GOD WHAT HAPPENED"
+						return "OH NOES"
 	def getMenu(self):
 		menu = {}
 		menu['groups'] = self.dump('%s:groups' % dbprefix)
@@ -111,7 +122,7 @@ class DBNode:
 		self.valType = valType
 		self.aamc = self.addAndMakeChild
 		self.db = None
-		self.subvar = None # this points to the name of the variable of a child; there can only be one variable for each child otherwise they might collide
+		self.subvar = None # this points to the name of the variable of a child; there can only be one variable in each set of children else they might collide
 				
 		if self.parent != None:
 			self.db = self.parent.db
@@ -159,16 +170,14 @@ class DBNode:
 					attribs.add(child.name)
 			if not hasAttribs:
 				self.aamc('value','attribs',valType='set')
-			print attribs
-			self['attribs'].add(False, *attribs, **kwargs)		
+			self['attribs'].addNoUpdateAttribs(*attribs, **kwargs)		
 		if self.parent != None:
 			self.parent.updateAttribs(**self.removeSelfFromKwargs(kwargs))
 			
 	def updateIndex(self, **kwargs):
 		if self.typeOfNode == 'variable':
-			print kwargs
 			possibleNewVariable = kwargs[self.name]
-			self.parent[self.myIndex()].add(False,possibleNewVariable,**self.removeSelfFromKwargs(kwargs))
+			self.parent[self.myIndex()].addNoUpdateAttribs(possibleNewVariable,**self.removeSelfFromKwargs(kwargs))
 		
 	def removeSelfFromKwargs(self, kwargs):
 		newKwargs = copy.copy(kwargs)
@@ -221,18 +230,31 @@ class DBNode:
 			
 	def getFullPath(self):
 		return ':'.join(self.getPathList())
+		
+		# Write Ops
 			
-	def add(self,updateAttribs=True,*addThis, **kwargs):
+	def add(self, *addThis, **kwargs):
 		self.genericOp(self.db.sadd, 'set', updateAttribs, *addThis, **kwargs)
 		
-	def append(self,updateAttribs=True,*appendThis, **kwargs):
-		self.genericOp(self.db.rpush, 'list', updateAttribs, *appendThis, **kwargs)
+	def addNoUpdateAttribs(self, *addThis, **kwargs):
+		self.genericOp(self.db.sadd, 'set', False, *addThis, **kwargs)
 		
-	def delete(self, updateAttribs=True, **kwargs):
-		self.genericOp(self.db.delete, None, updateAttribs, **kwargs)
+	def append(self, *appendThis, **kwargs):
+		self.genericOp(self.db.rpush, 'list', True, *appendThis, **kwargs)
 		
-	def set(self, setTo, updateAttribs=True, **kwargs):
-		self.genericOp(self.db.set, 'string', updateAttribs, setTo, **kwargs)
+	def set(self, setTo, **kwargs):
+		self.genericOp(self.db.set, 'string', True, setTo, **kwargs)
+		
+	def delete(self, **kwargs):
+		self.genericOp(self.db.delete, None, True, **kwargs)
+		
+		# Read Ops
+		
+	def getlist(self, **kwargs):
+		self.genericOp(self.db.lget, None, True, **kwargs)
+		
+	def get(self, **kwargs):
+		self.genericOp(self.db.get, None, True, **kwargs)
 		
 	def genericOp(self, op, valType, updateAttribs=True, *val, **kwargs):
 		if self.typeOfNode != 'value' or (self.valType != valType and valType != None):
@@ -240,7 +262,7 @@ class DBNode:
 		self._checkKwargs(kwargs, updateAttribs=updateAttribs)
 		if val != ():
 			op(self.getFullPath().format(**kwargs), *val)
-		elif op in [self.db.delete]:
+		elif op in [self.db.delete, self.db.get, self.db.lget]:
 			op(self.getFullPath().format(**kwargs))
 			
 	def getExpectedKwargs(self):
@@ -251,7 +273,6 @@ class DBNode:
 		allVars =self.getExpectedKwargs()
 		kwargVars = set(kwargs.keys())
 		if allVars == kwargVars:
-			print 'checkin'
 			if updateAttribs:
 				self.updateAttribs(**kwargs)
 			return True
@@ -310,7 +331,6 @@ def initSetValues(lastNode, submenu, **kwargs):
 	if isinstance(submenu,dict):
 		# then we dig deeper
 		for key in submenu.keys():
-			print key
 			if lastNode.hasChildNamed(key):
 				initSetValues(lastNode[key], submenu[key], **kwargs)
 			else:
@@ -321,13 +341,18 @@ def initSetValues(lastNode, submenu, **kwargs):
 				initSetValues(lastNode[name], submenu[key], **kwargs)
 	else:
 		# we need to set something:
+		print type(submenu)
 		if isinstance(submenu, list):
-			#lastNode.delete(**kwargs)
-			lastNode.append(submenu,**kwargs)
+			lastNode.delete(**kwargs)
+			lastNode.append(*submenu,**kwargs)
 			print "append", lastNode.getFullPath().format(**kwargs), submenu
+			#print "### SLEEPING"
+			#time.sleep(1)
 		elif isinstance(submenu, str) or isinstance(submenu,unicode):
 			lastNode.set(submenu,**kwargs)
 			print "set", lastNode.getFullPath().format(**kwargs), submenu
+			#print "### SLEEPING"
+			#time.sleep(1)
 
 def loadInitialMenu():
 	initMenu = "sample.menu"
@@ -341,6 +366,7 @@ def get_menu():
 	menu = db.getMenu()
 	return json.dumps(menu)
 
+db.r.rpush("cj_api_test:groups:burrito:options:Filling:listOfOptions","test3","test4")
 
 if __name__ == "__main__":
 	loadInitialMenu()
