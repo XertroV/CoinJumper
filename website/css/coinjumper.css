@@ -1,0 +1,48 @@
+h1, h2, h3, h4, h5, h6, p, a, body {
+	font-family: 'Roboto Condensed', helvetica, sans-serif;
+}
+
+.workflow {
+	padding-top: 50px;
+}
+
+#workflow-content {
+	padding-top: 10px;
+}
+
+.cj-section {
+	padding: 10px 0px 10px 0px;
+}
+
+.hidden-onload {
+	display: none;
+}
+
+
+h1.cj-section-result {
+	margin: 0px;
+}
+
+/* Selection Options */
+.cj-section-choice h1 {
+	padding-left: 20px;
+}
+.cj-section-choice ul {
+	padding: 0px;
+}
+.cj-section-choice ul li {
+	display: block;
+	font-size: 25px;
+	padding-left: 40px;
+}
+
+.cj-section-choice ul li:nth-child(odd){
+	background-color: rgba(255,255,255,0.1);
+}
+.cj-section-choice ul li:nth-child(even){
+	background-color: rgba(255,255,255,0.2);
+}
+
+.cj-section-choice ul li a{
+	color: rgb(51, 51, 51);
+}
