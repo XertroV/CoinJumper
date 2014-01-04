@@ -1,16 +1,31 @@
 var activeMenu = undefined;
-var nonce = 123456;
+var nonce = Math.floor(Math.random()*10000);
 var prime = nextPrime(3+nonce-(nonce%2+1));
 var colors = [
-	"#A700AE",
-	"#643EBF",
-	"#00A0B1",
-	"#DC572E",
-	"#2E8DEF",
-	"#0A5BC4",
-	"#BF1E4B",
-	"#00A600",
-	"#F7D240"
+	"#F3B200",
+	"#77B900",
+	"#2572EB",
+	"#AD103C",
+	"#B01E00",
+	"#C1004F",
+	"#7200AC",
+	"#4617B4",
+	"#006AC1",
+	"#008287",
+	"#199900",
+	"#00C13F",
+	"#FF981D",
+	"#FF2E12",
+	"#FF1D77",
+	"#AA40FF",
+	"#1FAEFF",
+	"#56C5FF",
+	"#00D8CC",
+	"#91D100",
+	"#E1B700",
+	"#FF76BC",
+	"#00A3A3",
+	"#FE7C22"
 ];
 var workflowSteps = [
 	"#looking-for",
@@ -82,6 +97,10 @@ function leastFactor(n){
  return n;
 }
 
+function genList(inputList){
+	
+}
+
 //
 // WORKFLOW
 //
@@ -93,22 +112,49 @@ function lookingFor(typeOfEst){
 }
 
 function chooseEstablishment(establishment){
-	// dummy
+	// show loading
+	$('.loading-section').slideDown(200);
+	getMenu(establishment);
 	target = ["#list-establishments > .cj-section-choice", "#view-menu", "#view-menu > .cj-section-title"];
 	transition(target, establishment);
 }
 
 function getMenu(establishment){
-	$.get( "http://127.0.0.1:5000/api/get/menu", function(data){
-		activeMenu = $.parseJSON(data);
-		alert(data);
+	$.ajax({
+		url:"menu", 
+		success:function(data){
+			// generate html based on data
+			genMenu(data);
+		},
+		error:function(xhr,status,error){
+			//fail silently :(
+			console.log('getMenu() : ajax failed');
+		},
+		type: 'GET',
+		dataType: 'json'
 	});
+}
+
+function genMenu(menu){
+	listOfClasses = [];
+	listOfGroups = [];
+	
+	for (var key in menu['items'])
+		listOfClasses.push(key);
+	for (var key in menu['groups'])
+		listOfGroups.push(key);
+		
+	//console.log(listOfClasses);
+	//console.log(listOfGroups);
+	
+	
 }
 
 function start(){
 	// may load something different to begin with in final product
 	// for the moment this is included in index.html
 	colorize();
+	//alert($.parseJSON('{"items": {"Food": {"Burrito": {"group": "burrito", "description": "Just scrumptious.", "basePrice": "7.50"}}, "Drinks": {"Tea": {"group": "tea", "description": "Nice cuppa tea.", "basePrice": "2.50"}, "Coffee": {"group": "coffee", "description": "Delicious espresso coffee.", "basePrice": "3.00"}}}, "groups": {"tea": {"options": {"Type": {"default": "Earl Grey", "optionType": "selectOne", "listOfOptions": ["Earl Grey", "English Breakfast"]}}, "class": "Drinks"}, "coffee": {"options": {"Type": {"default": "", "optionType": "selectOne", "listOfOptions": ["latte", "mocha"]}, "Temperature": {"default": "hot", "optionType": "selectOne", "listOfOptions": ["hot", "med", "warm"]}}, "class": "Drinks"}, "burrito": {"options": {"Filling": {"default": "", "optionType": "selectOne", "listOfOptions": ["chicken", "beef", "beans"]}}, "class": "Food"}}}'));
 }
 
-$.onload(start);
+window.onload = start;

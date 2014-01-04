@@ -13,7 +13,7 @@ dbprefix = 'cj_api_test'
 
 # import and init
 from flask import Flask
-from flask import request, redirect
+from flask import request, redirect, Response
 app = Flask(__name__)
 
 import logging
@@ -363,8 +363,8 @@ def loadInitialMenu():
 # routes
 @app.route("/api/get/menu")
 def get_menu():
-	menu = db.getMenu()
-	return json.dumps(menu)
+	menu = json.dumps(db.getMenu())
+	return Response(response=menu, status=200, mimetype='text/html')
 
 db.r.rpush("cj_api_test:groups:burrito:options:Filling:listOfOptions","test3","test4")
 

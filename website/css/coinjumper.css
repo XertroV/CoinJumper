@@ -1,3 +1,23 @@
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Roboto Condensed Light'), local('RobotoCondensed-Light'), url(rc-l.woff) format('woff');
+}
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto Condensed Regular'), local('RobotoCondensed-Regular'), url(rc-r.woff) format('woff');
+}
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(rc) format('woff');
+}
+
+
 h1, h2, h3, h4, h5, h6, p, a, body {
 	font-family: 'Roboto Condensed', helvetica, sans-serif;
 }
@@ -24,9 +44,14 @@ h1.cj-section-result {
 }
 
 /* Selection Options */
+h1.cj-section-title {
+	padding-left: 20px;
+}
+
 .cj-section-choice h1 {
 	padding-left: 20px;
 }
+
 .cj-section-choice ul {
 	padding: 0px;
 }
