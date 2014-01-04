@@ -6,10 +6,10 @@ var colors = [
 	"#77B900",
 	"#2572EB",
 	"#AD103C",
-	"#B01E00",
-	"#C1004F",
-	"#7200AC",
-	"#4617B4",
+	//"#B01E00",
+	//"#C1004F",
+	//"#7200AC",
+	//"#4617B4",
 	"#006AC1",
 	"#008287",
 	"#199900",
@@ -28,9 +28,13 @@ var colors = [
 	"#FE7C22"
 ];
 var workflowSteps = [
+	"#loading-section", // this should be first to avoid it being reset.
 	"#looking-for",
 	"#list-establishments",
-	"#view-menu"
+	"#view-menu",
+	"#view-class",
+	"#view-item",
+	"#view-options"
 ];
 
 //
@@ -97,8 +101,32 @@ function leastFactor(n){
  return n;
 }
 
-function genList(inputList){
+function genList(inputList, callbackList){
+	ret = "<ul>";
 	
+	for (var i in inputList){
+		//var i = inputList.indexOf(input);
+		ret += '<li onclick="'+callbackList[i]+'">'+inputList[i]+'</li>';
+	}
+	
+	ret += "</ul>";
+	console.log(ret);
+	console.log(inputList);
+	return ret;
+}
+
+function genSubMenu(submenu, callback) {
+	listSub = []
+	for (var key in submenu)
+		listSub.push(key);
+	console.log(listSub);
+	listOfCallbacks = [];
+	for (var index in listSub){
+		stringSub = listSub[index];
+		listOfCallbacks.push(callback+'(\''+stringSub+'\');');
+	}
+	console.log(listOfCallbacks);
+	return genList(listSub, listOfCallbacks);
 }
 
 //
@@ -107,7 +135,7 @@ function genList(inputList){
 
 function lookingFor(typeOfEst){
 	// dummy
-	target = ["#looking-for > .cj-section-choice", "#list-establishments", "#list-establishments > .cj-section-title"];
+	target = ["#looking-for .cj-section-choice", "#list-establishments", "#list-establishments .cj-section-title"];
 	transition(target, typeOfEst);
 }
 
@@ -115,8 +143,10 @@ function chooseEstablishment(establishment){
 	// show loading
 	$('.loading-section').slideDown(200);
 	getMenu(establishment);
-	target = ["#list-establishments > .cj-section-choice", "#view-menu", "#view-menu > .cj-section-title"];
-	transition(target, establishment);
+	$('.loading-section').slideUp(200, function() {
+		target = ["#list-establishments .cj-section-choice", "#view-menu", "#view-menu .cj-section-title"];
+		transition(target, establishment);
+	});
 }
 
 function getMenu(establishment){
@@ -124,7 +154,8 @@ function getMenu(establishment){
 		url:"menu", 
 		success:function(data){
 			// generate html based on data
-			genMenu(data);
+			activeMenu = data;
+			$('#view-menu .cj-section-choice').html(genMenu());
 		},
 		error:function(xhr,status,error){
 			//fail silently :(
@@ -135,18 +166,53 @@ function getMenu(establishment){
 	});
 }
 
-function genMenu(menu){
-	listOfClasses = [];
-	listOfGroups = [];
+function genMenu(){
+	return genSubMenu(activeMenu['items'], 'chooseClass');
+	/* listOfClasses = [];
 	
-	for (var key in menu['items'])
+	for (var key in activeMenu['items'])
 		listOfClasses.push(key);
-	for (var key in menu['groups'])
-		listOfGroups.push(key);
 		
-	//console.log(listOfClasses);
-	//console.log(listOfGroups);
+	listOfCallbacks = [];
+	for (var cIndex in listOfClasses){
+		classOfItem = listOfClasses[cIndex];
+		listOfCallbacks.push('chooseClass(\''+classOfItem+'\');');
+	}
+		
+	return genList(listOfClasses, listOfCallbacks); */
+}
+
+function chooseClass(classOfItem) {
+	$('#view-class .cj-section-choice').html(genClass(classOfItem));
+	target = ["#view-menu .cj-section-choice", "#view-class", "#view-class .cj-section-title"];
+	transition(target, classOfItem);
+}
+
+function genClass(classOfItem){
+	return genSubMenu(activeMenu['items'][classOfItem], 'chooseItem');
+	/* listOfItems = [];
 	
+	for (var key in activeMenu['items'][classOfItem]){
+		listOfItems.push(key);
+	}
+	
+	listOfCallbacks = [];
+	for (var iIndex in listOfItems){
+		itemString = listOfItems[iIndex];
+		listOfCallbacks.push('chooseItem(\''+itemString+'\');');
+	}
+	
+	return genList(listOfItems, listOfCallbacks); */
+}
+
+function chooseItem(itemName) {
+	$('#view-item .cj-section-choice').html(genItem(itemName));
+	target = ["#view-class .cj-section-choice", "#view-item", "#view-item .cj-section-title"];
+	transition(target, itemName);
+}
+
+function genItem(itemName) {
+	// more complex, need to account for options...
 	
 }
 

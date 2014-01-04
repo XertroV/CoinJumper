@@ -14,20 +14,35 @@
   font-family: 'Roboto Condensed';
   font-style: normal;
   font-weight: 700;
-  src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(rc) format('woff');
+  src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(rc-b.woff) format('woff');
 }
 
+body {
+	background-color: rgb(34, 34, 34);
+}
+
+a.navbar-brand {
+	padding: 10px 0px 10px 25px;
+	margin-left: 0px;
+	font-size: 50px;
+	line-height: 50px;
+	font-weight: 700;
+}
+
+.navbar-fixed-top {
+	border-width: 0px 0px 0px;
+}
 
 h1, h2, h3, h4, h5, h6, p, a, body {
 	font-family: 'Roboto Condensed', helvetica, sans-serif;
 }
 
 .workflow {
-	padding-top: 50px;
+	padding-top: 70px;
 }
 
 #workflow-content {
-	padding-top: 10px;
+	padding-top: 0px;
 }
 
 .cj-section {
@@ -41,6 +56,10 @@ h1, h2, h3, h4, h5, h6, p, a, body {
 
 h1.cj-section-result {
 	margin: 0px;
+}
+
+h1, h2, h3 {
+	margin-top: 10px;
 }
 
 /* Selection Options */
@@ -59,6 +78,12 @@ h1.cj-section-title {
 	display: block;
 	font-size: 25px;
 	padding-left: 40px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .cj-section-choice ul li:nth-child(odd){
