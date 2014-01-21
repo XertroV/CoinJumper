@@ -3,8 +3,7 @@ var activeClass = undefined;
 var activeItem = undefined;
 var activeOptions = undefined;
 var cart = [];
-console.log(cart);
-var nonce = Math.floor(Math.random()*10000);
+var nonce = randNums() % 0xFFFF;
 var prime = nextPrime(3+nonce-(nonce%2+1));
 var colors = [
 	"#F3B200",
@@ -46,6 +45,14 @@ var workflowSteps = [
 // HELPERS
 //
 
+function randNums(){
+	return Math.floor(Math.random()*4294967295)
+}
+
+function randHex(){
+	return randNums().toString(16)+randNums().toString(16);
+}
+
 function transition(target, value){
 	$(target[0]).slideUp(200);
 	$(target[2]).html(value);
@@ -78,6 +85,14 @@ function nextPrime(p){
 		if (isPrime(p))
 			return p
 	}
+}
+
+function toggleOverlay(id){
+	$("#"+id).fadeToggle(200);
+}
+
+function showCart(){
+	toggleOverlay("cart-overlay");
 }
 
 // The following two functions borrowed from: http://www.javascripter.net/faq/numberisprime.htm
@@ -148,6 +163,48 @@ function genSubMenu(submenu, callback) {
 	return genList(listSub, listOfCallbacks);
 }
 
+
+function updateCart() {
+	// update status - number in cart
+	$('#cart-status').html(cart.length);
+	
+	// generate cart html
+	cartHTML = "";
+	
+	cart.forEach(function(cartItem){
+		cartHTML += "<li id='"+cartItem["id"]+"'>"+cartItem["itemName"];
+		cartHTML += "<span class='glyphicon glyphicon-remove pull-right cart-remove-item' onclick=\"removeItem('"+cartItem["id"]+"')\"></span>";
+		cartHTML += "<p class='cart-description'>";
+		var firstRun = true;
+		cartItem["options"].forEach(function(optPair){
+			cartHTML += optPair[0]+": "+optPair[1];
+			if(!firstRun){
+				cartHTML += "<br />";
+			}else{
+				firstRun = false;
+			}
+		});
+		cartHTML += "</p>";
+		cartHTML += "</li>";
+	});
+	
+	if(cartHTML == ""){
+		cartHTML += "<li>Empty :(</li>";
+	}
+	
+	$("#cart-list").html(cartHTML);
+}
+
+function removeItem(id){
+	for (var i in cart){
+		if(cart[i]["id"] == id){
+			cart.splice(i, 1);
+			break;
+		}
+	}
+	$("#"+id).slideUp(150,function(){updateCart()});
+}
+
 //
 // WORKFLOW
 //
@@ -163,10 +220,9 @@ function chooseEstablishment(establishment){
 	// show loading
 	$('.loading-section').slideDown(200);
 	getMenu(establishment);
-	$('.loading-section').slideUp(200, function() {
-		target = ["#list-establishments .cj-section-choice", "#view-menu", "#view-menu .cj-section-title"];
-		transition(target, establishment);
-	});
+	$('.loading-section').slideUp(200);
+	target = ["#list-establishments .cj-section-choice", "#view-menu", "#view-menu .cj-section-title"];
+	transition(target, establishment);
 }
 
 function getMenu(establishment){
@@ -292,12 +348,13 @@ function genItem(itemName) {
 }
 
 function addToCart() {
-	orderToAdd = {itemName:activeItem,options:[]};
+	orderToAdd = {itemName:activeItem,options:[],id:randHex()};
 	for (var propName in activeOptions) {
 		orderToAdd["options"].push([propName, $('#option-'+propName).val()]);
 	}
 	cart.push(orderToAdd);
 	console.log(cart);
+	updateCart();
 	showThis('class');
 }
 

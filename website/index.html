@@ -20,6 +20,14 @@
         <div class="navbar-header">
           <a class="navbar-brand" href="#">CoinAhead</a>
         </div>
+        <ul class="nav navbar-nav navbar-right nav-cart">
+			<li>
+				<a onclick="showCart()">
+					<span class="glyphicon glyphicon-shopping-cart"></span>
+					<span id="cart-status">0</span>
+				</a>
+			</li>
+        </ul>
       </div>
     </div>
     
@@ -74,6 +82,23 @@
 			</div>
 		</div>
     </div>
+
+	<div class="overlay" id="cart-overlay">
+		<div class="container">
+			<div class="overlay-close" onclick="toggleOverlay('cart-overlay')"><span class="glyphicon glyphicon-remove"></span></div>
+			<h1 class="cart-title">Cart</h1>
+			<ul class="cart-list" id="cart-list">
+				<li id='somerandomid'>Burrito
+					<span class="glyphicon glyphicon-remove pull-right cart-remove-item" onclick="removeItem('somerandomid')"></span>
+					<p class="cart-description">Filling: chicken<br>Temp: hot</p>
+				</li>
+				<li id='somerandomid'>Coffee
+					<span class="glyphicon glyphicon-remove pull-right cart-remove-item" onclick="removeItem('somerandomid')"></span>
+					<p class="cart-description">Type: latte<br>Temp: hot</p>
+				</li>
+			</ul>
+		</div>
+	</div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="js/jquery.js"></script>

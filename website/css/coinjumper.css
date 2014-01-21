@@ -74,7 +74,7 @@ h1.cj-section-title {
 .cj-section-choice ul {
 	padding: 0px;
 }
-.cj-section-choice ul li {
+.cj-section-choice ul li, #cart-list li {
 	display: block;
 	font-size: 25px;
 	padding-left: 40px;
@@ -85,6 +85,10 @@ h1.cj-section-title {
 	-moz-user-select: none;d
 	-ms-user-select: none;
 	user-select: none;
+}
+
+#cart-list li {
+	padding-left: 0px;
 }
 
 .cj-section-choice ul li select {
@@ -108,4 +112,71 @@ h1.cj-section-title {
 
 .cj-btns-order > .btn {
 	font-size: 18px;
+}
+
+.navbar-header {
+	float:left;
+}
+
+.nav-cart {
+	float:right;
+	font-size: 30px;
+}
+
+.overlay {
+	display: block;
+	position: fixed;
+	top: 70px;
+	left: 0;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	height: 100%;
+	margin-top: 0px;
+	background-color: #000;
+	color: rgb(153, 153, 153);
+}
+
+.overlay-close {
+	display: block;
+	float: right;
+	font-size: 30px;
+	padding: 10px 10px 0px 0px;    
+}
+
+.cart-title {
+	padding-left: 20px;
+}
+
+.cart-description {
+	font-size: 15px;
+	padding-left: 10px;
+	margin-bottom: 0px;
+	padding-bottom: 10px;
+}
+
+.container {
+	max-width: 600px;
+}
+
+.cart-remove-item {
+	padding-top: 8px;
+}
+
+#cart-list {
+	padding-left: 0px;
+}
+
+#cart-list li {
+	display: block;
+	padding-left: 40px;
+	margin: 0px;
+	padding-top: 5px;
+}
+
+#cart-list li:nth-child(odd){
+	background-color: rgba(255,255,255,0.1);
+}
+#cart-list li:nth-child(even){
+	background-color: rgba(255,255,255,0.2);
 }
