@@ -31,72 +31,77 @@
       </div>
     </div>
     
-    <div class="workflow">
-		<div class="row">
-			<div class="span12">
-				<div id="workflow-content">
-					<div class="cj-section" id="looking-for"><div class="container">
-						<h1 class="cj-section-title">Looking For..</h1>
-						<div class="cj-section-choice">
-							<ul>
-								<li onclick="lookingFor('Cafes');">Cafes</li>
-								<li onclick="lookingFor('Restaurants');">Restaurants</li>
-							</ul>
-						</div></div>
+    <div id="wrap">
+		<div class="workflow">
+			<div id="workflow-content">
+				<div class="cj-section" id="looking-for"><div class="container">
+					<h1 class="cj-section-title">Looking For..</h1>
+					<div class="cj-section-choice">
+						<ul>
+							<li onclick="lookingFor('Cafes');">Cafes</li>
+							<li onclick="lookingFor('Restaurants');">Restaurants</li>
+						</ul>
+					</div></div>
+				</div>
+				<div class="cj-section hidden-onload" id="list-establishments"><div class="container">
+					<h1 class="cj-section-title"></h1>
+					<div class="cj-section-choice">
+						<ul>
+							<li onclick="chooseEstablishment('Azzuri');">Azzuri</li>
+						</ul>
+					</div></div>
+				</div>
+				<div class="cj-section hidden-onload" id="view-menu"><div class="container">
+					<h1 class="cj-section-title" onclick="showThis('menu');"></h1>
+					<div class="cj-section-choice">
+					</div></div>
+				</div>
+				<div class="cj-section hidden-onload" id="view-class"><div class="container">
+					<h1 class="cj-section-title" onclick="showThis('class');"></h1>
+					<div class="cj-section-choice">
+					</div></div>
+				</div>
+				<div class="cj-section hidden-onload" id="view-item"><div class="container">
+					<h1 class="cj-section-title"></h1>
+					<div class="cj-section-choice">
 					</div>
-					<div class="cj-section hidden-onload" id="list-establishments"><div class="container">
-						<h1 class="cj-section-title"></h1>
-						<div class="cj-section-choice">
-							<ul>
-								<li onclick="chooseEstablishment('Azzuri');">Azzuri</li>
-							</ul>
-						</div></div>
-					</div>
-					<div class="cj-section hidden-onload" id="view-menu"><div class="container">
-						<h1 class="cj-section-title" onclick="showThis('menu');"></h1>
-						<div class="cj-section-choice">
-						</div></div>
-					</div>
-					<div class="cj-section hidden-onload" id="view-class"><div class="container">
-						<h1 class="cj-section-title" onclick="showThis('class');"></h1>
-						<div class="cj-section-choice">
-						</div></div>
-					</div>
-					<div class="cj-section hidden-onload" id="view-item"><div class="container">
-						<h1 class="cj-section-title"></h1>
-						<div class="cj-section-choice">
-						</div>
-						</div>
-					</div>
-					<div class="cj-section hidden-onload" id="view-option"><div class="container">
-						<h1 class="cj-section-title"></h1>
-						<div class="cj-section-choice">
-						</div></div>
 					</div>
 				</div>
-				<div class="cj-section loading-section hidden-onload" id="loading-section">
-					<div class="container">
-						<h1 class="cj-section-title">Loading...</h1>
-					</div>
+				<div class="cj-section hidden-onload" id="view-option"><div class="container">
+					<h1 class="cj-section-title"></h1>
+					<div class="cj-section-choice">
+					</div></div>
+				</div>
+			</div>
+			<div class="cj-section loading-section hidden-onload" id="loading-section">
+				<div class="container">
+					<h1 class="cj-section-title">Loading...</h1>
 				</div>
 			</div>
 		</div>
-    </div>
 
-	<div class="overlay" id="cart-overlay">
+		<div class="overlay" id="cart-overlay">
+			<div class="container">
+				<div class="overlay-close" onclick="toggleOverlay('cart-overlay')"><span class="glyphicon glyphicon-remove"></span></div>
+				<h1 class="cart-title">Cart</h1>
+				<ul class="cart-list" id="cart-list">
+					<li id='somerandomid'>Burrito
+						<span class="glyphicon glyphicon-remove pull-right cart-remove-item" onclick="removeItem('somerandomid')"></span>
+						<p class="cart-description">Filling: chicken<br>Temp: hot</p>
+					</li>
+					<li id='somerandomid'>Coffee
+						<span class="glyphicon glyphicon-remove pull-right cart-remove-item" onclick="removeItem('somerandomid')"></span>
+						<p class="cart-description">Type: latte<br>Temp: hot</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div id="footer" class="navbar-fixed-bottom">
 		<div class="container">
-			<div class="overlay-close" onclick="toggleOverlay('cart-overlay')"><span class="glyphicon glyphicon-remove"></span></div>
-			<h1 class="cart-title">Cart</h1>
-			<ul class="cart-list" id="cart-list">
-				<li id='somerandomid'>Burrito
-					<span class="glyphicon glyphicon-remove pull-right cart-remove-item" onclick="removeItem('somerandomid')"></span>
-					<p class="cart-description">Filling: chicken<br>Temp: hot</p>
-				</li>
-				<li id='somerandomid'>Coffee
-					<span class="glyphicon glyphicon-remove pull-right cart-remove-item" onclick="removeItem('somerandomid')"></span>
-					<p class="cart-description">Type: latte<br>Temp: hot</p>
-				</li>
-			</ul>
+			<p class="footer-text pull-left">GitHub</p>
+			<span class="pull-right"><h2>ORDER & PAY</h2></span>
 		</div>
 	</div>
 

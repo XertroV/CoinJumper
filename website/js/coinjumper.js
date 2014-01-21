@@ -56,7 +56,7 @@ function randHex(){
 function transition(target, value){
 	$(target[0]).slideUp(200);
 	$(target[2]).html(value);
-	$(target[1]).slideDown(200);
+	$(target[1]).slideDown(200,function(){scrollToBottom();});
 	$(target[1]+" .cj-section-choice").slideDown(200);
 }
 
@@ -66,6 +66,14 @@ function transitionBackwards(closeThese, openThis){
 		$(closeThis).slideUp(200);
 	});
 	$(openThis+" .cj-section-choice").slideDown(200);
+}
+
+function scrollToBottom(){
+	$('html, body').animate({ 
+		scrollTop: $(document).height()-$(window).height()}, 
+		300, 
+		"swing"
+	);
 }
 
 function colorize(){
@@ -175,21 +183,18 @@ function updateCart() {
 		cartHTML += "<li id='"+cartItem["id"]+"'>"+cartItem["itemName"];
 		cartHTML += "<span class='glyphicon glyphicon-remove pull-right cart-remove-item' onclick=\"removeItem('"+cartItem["id"]+"')\"></span>";
 		cartHTML += "<p class='cart-description'>";
-		var firstRun = true;
+		firstRun = true;
 		cartItem["options"].forEach(function(optPair){
 			cartHTML += optPair[0]+": "+optPair[1];
-			if(!firstRun){
-				cartHTML += "<br />";
-			}else{
-				firstRun = false;
-			}
+			cartHTML += "<br>";
 		});
 		cartHTML += "</p>";
 		cartHTML += "</li>";
+		console.log(cartHTML);
 	});
 	
 	if(cartHTML == ""){
-		cartHTML += "<li>Empty :(</li>";
+		cartHTML += "<li>Empty <p class='cart-description'>:(</p></li>";
 	}
 	
 	$("#cart-list").html(cartHTML);

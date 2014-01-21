@@ -180,3 +180,18 @@ h1.cj-section-title {
 #cart-list li:nth-child(even){
 	background-color: rgba(255,255,255,0.2);
 }
+
+#wrap {
+    min-height: 100%;
+    height: auto;
+    margin: 0px auto -60px;
+    padding: 0px 0px 60px;
+}
+#footer {
+    height: 60px;
+    background-color: #CCC;
+}
+
+#footer .footer-text {
+	margin-top: 20px;
+}
