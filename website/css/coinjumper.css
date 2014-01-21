@@ -78,12 +78,17 @@ h1.cj-section-title {
 	display: block;
 	font-size: 25px;
 	padding-left: 40px;
+	padding-right: 40px;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
-	-moz-user-select: none;
+	-moz-user-select: none;d
 	-ms-user-select: none;
 	user-select: none;
+}
+
+.cj-section-choice ul li select {
+	font-size: 20px;
 }
 
 .cj-section-choice ul li:nth-child(odd){
@@ -95,4 +100,12 @@ h1.cj-section-title {
 
 .cj-section-choice ul li a{
 	color: rgb(51, 51, 51);
+}
+
+.cj-btns-order {
+	padding-right: 40px;
+}
+
+.cj-btns-order > .btn {
+	font-size: 18px;
 }

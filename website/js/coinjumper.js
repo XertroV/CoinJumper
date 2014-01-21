@@ -1,4 +1,9 @@
 var activeMenu = undefined;
+var activeClass = undefined;
+var activeItem = undefined;
+var activeOptions = undefined;
+var cart = [];
+console.log(cart);
 var nonce = Math.floor(Math.random()*10000);
 var prime = nextPrime(3+nonce-(nonce%2+1));
 var colors = [
@@ -34,7 +39,7 @@ var workflowSteps = [
 	"#view-menu",
 	"#view-class",
 	"#view-item",
-	"#view-options"
+	"#view-option"
 ];
 
 //
@@ -45,6 +50,15 @@ function transition(target, value){
 	$(target[0]).slideUp(200);
 	$(target[2]).html(value);
 	$(target[1]).slideDown(200);
+	$(target[1]+" .cj-section-choice").slideDown(200);
+}
+
+function transitionBackwards(closeThese, openThis){
+	// close each member of closeThese and then expand openThis
+	closeThese.forEach(function(closeThis){
+		$(closeThis).slideUp(200);
+	});
+	$(openThis+" .cj-section-choice").slideDown(200);
 }
 
 function colorize(){
@@ -102,6 +116,9 @@ function leastFactor(n){
 }
 
 function genList(inputList, callbackList){
+	// loop through inputList and callbackList and create an unordered
+	// list in html where each element links to the callback and is named
+	// as in inputList.
 	ret = "<ul>";
 	
 	for (var i in inputList){
@@ -116,6 +133,8 @@ function genList(inputList, callbackList){
 }
 
 function genSubMenu(submenu, callback) {
+	// take part of a menu{} and a string of a function to callback and
+	// create two corresponding lists of titles and callbacks, pass to genList
 	listSub = []
 	for (var key in submenu)
 		listSub.push(key);
@@ -134,12 +153,13 @@ function genSubMenu(submenu, callback) {
 //
 
 function lookingFor(typeOfEst){
-	// dummy
+	// dummy - will be replaced later
 	target = ["#looking-for .cj-section-choice", "#list-establishments", "#list-establishments .cj-section-title"];
 	transition(target, typeOfEst);
 }
 
 function chooseEstablishment(establishment){
+	// call from html - selects a particular establishment
 	// show loading
 	$('.loading-section').slideDown(200);
 	getMenu(establishment);
@@ -151,7 +171,7 @@ function chooseEstablishment(establishment){
 
 function getMenu(establishment){
 	$.ajax({
-		url:"menu", 
+		url:"menu", // menu should be real menu URL in future
 		success:function(data){
 			// generate html based on data
 			activeMenu = data;
@@ -189,6 +209,7 @@ function chooseClass(classOfItem) {
 }
 
 function genClass(classOfItem){
+	activeClass = classOfItem;
 	return genSubMenu(activeMenu['items'][classOfItem], 'chooseItem');
 	/* listOfItems = [];
 	
@@ -212,15 +233,110 @@ function chooseItem(itemName) {
 }
 
 function genItem(itemName) {
-	// more complex, need to account for options...
+	// handle generating everything in the #view-item div
+	activeItem = itemName;
+	var itemProps = activeMenu['items'][activeClass][activeItem];
+	var group = itemProps["group"];
+	var desc = itemProps["description"];
+	var basePrice = itemProps["basePrice"];
+	
+	var options = activeMenu["groups"][group]["options"];
+	activeOptions = options;
+	
+	var toRet = "<ul>";
+	
+	// iterate through options and generate form
+	for (var key in activeOptions) {
+		var propName = key;
+		var optionProps = activeOptions[propName];
+		var listOfOptions = optionProps["listOfOptions"];
+		var defaultt = optionProps["default"];
+		var optionType = optionProps["optionType"]; // selectOne, selectMany
+		
+		toRet += "<li>" + propName;
+		
+		switch(optionType){
+			case "selectOne":
+				toRet += "<select class='pull-right' id='option-"+propName+"'>";
+				
+				listOfOptions.forEach(function(item){
+					toRet += "<option value=\""+item+"\">"+item+"</option>";
+				});
+				toRet += "</select>";
+				break;
+		}
+		
+		toRet += "</li>";
+	}
+	
+	toRet += "</ul>";
+	
+	
+	/*toRet += "<div class='input-group cj-btns-quant'>";
+	toRet += "<span class='input-group-btn'>";
+	toRet += "<button class='btn btn-default' type='button'><span class='glyphicon glyphicon-chevron-up'></span></button>";
+	toRet += "</span>";
+	toRet += "<input type='number' class='form-control'>"
+	toRet += "<span class='input-group-btn'>";
+	toRet += "<button class='btn btn-default' type='button'><span class='glyphicon glyphicon-chevron-down'></span></button>";
+	toRet += "</span>";
+	toRet += "</div>";*/
+	
+	
+	toRet += "<div class='btn-group cj-btns-order pull-right'>";
+	toRet += "<button type='button' class='btn btn-default' onclick='showThis(\"class\")'>Cancel</button>";
+	toRet += "<button type='button' class='btn btn-default' onclick='addToCart()'>Add To Cart</button>";
+	toRet += "</div>";
+	
+	return toRet;
+}
+
+function addToCart() {
+	orderToAdd = {itemName:activeItem,options:[]};
+	for (var propName in activeOptions) {
+		orderToAdd["options"].push([propName, $('#option-'+propName).val()]);
+	}
+	cart.push(orderToAdd);
+	console.log(cart);
+	showThis('class');
+}
+
+function showThis(toShow) {
+	switch(toShow){
+		case "class":
+			transitionBackwards(["#view-item"],"#view-class");
+			break;
+		case "menu":
+			transitionBackwards(["#view-item","#view-class"],"#view-menu");
+			
+	}
+}
+
+/*function chooseProperty(propName) {
+	$('#view-option .cj-section-choice').html(genProperties(propName));
+	target = ["#view-item .cj-section-choice", "#view-option", "#view-option .cj-section-title"];
+	transition(target, propName);
+}
+
+function genProperties(propName) {
 	
 }
+
+function modProperty(propName) {
+	// allow user to modify or set a property of the item for order
+	
+	var optionProps = activeOptions[propName];
+	var listOfOptions = optionProps["listOfOptions"];
+	var defaultt = optionProps["default"];
+	var optionType = optionProps["optionType"];
+	
+	
+}*/
 
 function start(){
 	// may load something different to begin with in final product
 	// for the moment this is included in index.html
 	colorize();
-	//alert($.parseJSON('{"items": {"Food": {"Burrito": {"group": "burrito", "description": "Just scrumptious.", "basePrice": "7.50"}}, "Drinks": {"Tea": {"group": "tea", "description": "Nice cuppa tea.", "basePrice": "2.50"}, "Coffee": {"group": "coffee", "description": "Delicious espresso coffee.", "basePrice": "3.00"}}}, "groups": {"tea": {"options": {"Type": {"default": "Earl Grey", "optionType": "selectOne", "listOfOptions": ["Earl Grey", "English Breakfast"]}}, "class": "Drinks"}, "coffee": {"options": {"Type": {"default": "", "optionType": "selectOne", "listOfOptions": ["latte", "mocha"]}, "Temperature": {"default": "hot", "optionType": "selectOne", "listOfOptions": ["hot", "med", "warm"]}}, "class": "Drinks"}, "burrito": {"options": {"Filling": {"default": "", "optionType": "selectOne", "listOfOptions": ["chicken", "beef", "beans"]}}, "class": "Food"}}}'));
 }
 
 window.onload = start;
